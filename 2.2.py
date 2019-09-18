@@ -12,8 +12,6 @@ def nn(X,Y,test):
     #X: training features
     #Y: labels of X
     #test: test features
-    testSize = test.shape[0]
-    trainSize = X.shape[0]
 
     #create prediction result
     dists = compute_distances(test, X)
@@ -24,7 +22,7 @@ def nn(X,Y,test):
 def knn_find_best_K(X,Y):
     #X: training features; Y: labels of X; test: test features; k: fold number
 
-    kf = KFold(n_splits = 10, shuffle= True, random_state = 1)
+    kf = KFold(n_splits = 10, shuffle= True, random_state = 3)
     #record test error sum of 10 k values
     test_err_sum = np.zeros(10)
     #split into 10 fold and run 10 times for each k
@@ -66,20 +64,12 @@ def findMajority(X):
 if __name__ == '__main__':
     ocr = loadmat('ocr.mat')
     kValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    test_err = np.zeros(len(kValues))
-
-    # array = np.array([[1,2,2,4,5],[5,4,3,3,0]])
-    # dists_sort = np.argsort(array, axis=1)
-    #
-    # print(dists_sort)
-    # Y = np.array([[1],[2],[3],[4],[5]])
-    # f3 = findFirstKElements(Y, dists_sort, 3)
-    # print('f3', f3)
-    # print(findMajority(f3))
-
     bestK= knn_find_best_K(ocr['data'].astype('float'), ocr['labels'])
     preds = knn(ocr['data'].astype('float'),ocr['labels'],ocr['testdata'].astype('float'), bestK)
     #find index of K having min test_err
-    test_err= np.mean(preds != ocr['testlabels'])
+    test_err = np.mean(preds != ocr['testlabels'])
     print(test_err)
 
+#error for k = 1 to 10:  [0.02753333 0.03395    0.02741667 0.02873333 0.02831667 0.02978333
+# 0.02971667 0.03085    0.0311     0.03245]
+#bestK = 3： 0.0295
